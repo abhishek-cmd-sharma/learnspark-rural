@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, Star } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface SubjectCardProps {
   name: string;
@@ -80,9 +81,11 @@ export function SubjectCard({
           </div>
         </div>
         
-        <Button variant="outline" className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-          Continue Learning
-        </Button>
+        <Link to={`/subject/${name.toLowerCase().replace(/\s+/g, '-')}`}>
+          <Button variant="outline" className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+            Continue Learning
+          </Button>
+        </Link>
       </div>
     </motion.div>
   );
