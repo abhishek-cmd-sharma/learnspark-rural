@@ -13,6 +13,10 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        'sans': ['Inter', 'system-ui', 'sans-serif'],
+        'display': ['Fredoka', 'system-ui', 'sans-serif'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -56,6 +60,46 @@ export default {
           "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
+        },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
+        // Subject colors
+        math: {
+          DEFAULT: "hsl(var(--math))",
+          light: "hsl(var(--math-light))",
+        },
+        english: {
+          DEFAULT: "hsl(var(--english))",
+          light: "hsl(var(--english-light))",
+        },
+        science: {
+          DEFAULT: "hsl(var(--science))",
+          light: "hsl(var(--science-light))",
+        },
+        history: {
+          DEFAULT: "hsl(var(--history))",
+          light: "hsl(var(--history-light))",
+        },
+        geography: {
+          DEFAULT: "hsl(var(--geography))",
+          light: "hsl(var(--geography-light))",
+        },
+        general: {
+          DEFAULT: "hsl(var(--general))",
+          light: "hsl(var(--general-light))",
+        },
+        // XP and level colors
+        xp: {
+          primary: "hsl(var(--xp-primary))",
+          secondary: "hsl(var(--xp-secondary))",
+        },
+        level: {
+          bronze: "hsl(var(--level-bronze))",
+          silver: "hsl(var(--level-silver))",
+          gold: "hsl(var(--level-gold))",
+          platinum: "hsl(var(--level-platinum))",
         },
       },
       borderRadius: {
