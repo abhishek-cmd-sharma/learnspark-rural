@@ -1,0 +1,249 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users collection
+    match /users/{userId} {
+      // Allow users to read their own data
+      allow read: if request.auth != null && request.auth.uid == userId;
+      
+      // Allow users to create their own document
+      allow create: if request.auth != null && request.auth.uid == userId;
+      
+      // Allow users to update their own data
+      allow update: if request.auth != null && request.auth.uid == userId;
+      
+      // Allow admins to read all user data
+      allow read: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Subjects collection
+    match /subjects/{subjectId} {
+      // Allow all authenticated users to read subjects
+      allow read: if request.auth != null;
+      
+      // Allow teachers and admins to create/update/delete subjects
+      allow create, update, delete: if request.auth != null && 
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'teacher' ||
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+    }
+    
+    // Quizzes collection
+    match /quizzes/{quizId} {
+      // Allow all authenticated users to read quizzes
+      allow read: if request.auth != null;
+      
+      // Allow teachers and admins to create/update/delete quizzes
+      allow create, update, delete: if request.auth != null && 
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'teacher' ||
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+    }
+    
+    // User quiz attempts collection
+    match /userQuizAttempts/{attemptId} {
+      // Allow users to read their own attempts
+      allow read: if request.auth != null && 
+        resource.data.userId == request.auth.uid;
+      
+      // Allow users to create their own attempts
+      allow create: if request.auth != null && 
+        request.resource.data.userId == request.auth.uid;
+      
+      // Allow users to update their own attempts (for completion)
+      allow update: if request.auth != null && 
+        resource.data.userId == request.auth.uid;
+    }
+    
+    // Achievements collection
+    match /achievements/{achievementId} {
+      // Allow all authenticated users to read achievements
+      allow read: if request.auth != null;
+      
+      // Allow admins to create/update/delete achievements
+      allow create, update, delete: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // User achievements collection
+    match /userAchievements/{userAchievementId} {
+      // Allow users to read their own achievements
+      allow read: if request.auth != null && 
+        resource.data.userId == request.auth.uid;
+      
+      // Allow system to create user achievements
+      allow create: if request.auth != null;
+      
+      // No updates or deletes for user achievements
+      allow update, delete: if false;
+    }
+    
+    // Contests collection
+    match /contests/{contestId} {
+      // Allow all authenticated users to read contests
+      allow read: if request.auth != null;
+      
+      // Allow teachers and admins to create/update/delete contests
+      allow create, update, delete: if request.auth != null && 
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'teacher' ||
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+    }
+    
+    // User contest participations collection
+    match /userContestParticipations/{participationId} {
+      // Allow users to read their own participations
+      allow read: if request.auth != null && 
+        resource.data.userId == request.auth.uid;
+      
+      // Allow users to create their own participations
+      allow create: if request.auth != null && 
+        request.resource.data.userId == request.auth.uid;
+      
+      // Allow users to update their own participations (for completion)
+      allow update: if request.auth != null && 
+        resource.data.userId == request.auth.uid;
+    }
+    
+    // Lessons collection
+    match /lessons/{lessonId} {
+      // Allow all authenticated users to read lessons
+      allow read: if request.auth != null;
+      
+      // Allow teachers and admins to create/update/delete lessons
+      allow create, update, delete: if request.auth != null && 
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'teacher' ||
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+    }
+    
+    // User lesson progress collection
+    match /userLessonProgress/{progressId} {
+      // Allow users to read their own progress
+      allow read: if request.auth != null && 
+        resource.data.userId == request.auth.uid;
+      
+      // Allow users to create/update their own progress
+      allow create, update: if request.auth != null && 
+        request.resource.data.userId == request.auth.uid;
+    }
+    
+    // Teacher-student relationships collection
+    match /teacherStudents/{relationshipId} {
+      // Allow teachers and students in the relationship to read
+      allow read: if request.auth != null && 
+        (resource.data.teacherId == request.auth.uid || 
+         resource.data.studentId == request.auth.uid);
+      
+      // Allow teachers to create relationships
+      allow create: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'teacher';
+      
+      // Allow teachers to update relationships
+      allow update: if request.auth != null && 
+        resource.data.teacherId == request.auth.uid;
+    }
+    
+    // Teacher classes collection
+    match /teacherClasses/{classId} {
+      // Allow teachers in the class to read
+      allow read: if request.auth != null && 
+        resource.data.teacherId == request.auth.uid;
+      
+      // Allow teachers to create/update classes
+      allow create, update: if request.auth != null && 
+        request.resource.data.teacherId == request.auth.uid;
+      
+      // Allow teachers to delete classes (mark as inactive)
+      allow delete: if request.auth != null &&
+        resource.data.teacherId == request.auth.uid;
+    }
+    
+    // XP Gains collection
+    match /xpGains/{xpGainId} {
+      // Allow users to read their own XP gains
+      allow read: if request.auth != null &&
+        resource.data.userId == request.auth.uid;
+      
+      // Allow system to create XP gains
+      allow create: if request.auth != null;
+      
+      // No updates or deletes for XP gains
+      allow update, delete: if false;
+    }
+    
+    // User lesson progress collection
+    match /userLessonProgress/{progressId} {
+      // Allow users to read their own progress
+      allow read: if request.auth != null &&
+        resource.data.userId == request.auth.uid;
+      
+      // Allow users to create/update their own progress
+      allow create, update: if request.auth != null &&
+        request.resource.data.userId == request.auth.uid;
+      
+      // Allow teachers to read progress of their students
+      allow read: if request.auth != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'teacher';
+    }
+    
+    // Lesson assignments collection
+    match /lessonAssignments/{assignmentId} {
+      // Allow teachers to create/read/update/delete assignments
+      allow read, write: if request.auth != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'teacher';
+      
+      // Allow students to read assignments assigned to them
+      allow read: if request.auth != null &&
+        request.auth.uid in resource.data.assignedStudents;
+    }
+    
+    // Lesson resources collection
+    match /lessonResources/{resourceId} {
+      // Allow all authenticated users to read resources
+      allow read: if request.auth != null;
+      
+      // Allow teachers and admins to create/update/delete resources
+      allow create, update, delete: if request.auth != null &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'teacher' ||
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+    }
+    
+    // Daily questions collection
+    match /dailyQuestions/{questionId} {
+      // Allow all authenticated users to read daily questions
+      allow read: if request.auth != null;
+      
+      // Allow teachers and admins to create/update/delete daily questions
+      allow create, update, delete: if request.auth != null &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'teacher' ||
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+    }
+    
+    // User daily question attempts collection
+    match /userDailyQuestionAttempts/{attemptId} {
+      // Allow users to read their own attempts
+      allow read: if request.auth != null &&
+        resource.data.userId == request.auth.uid;
+      
+      // Allow users to create their own attempts
+      allow create: if request.auth != null &&
+        request.resource.data.userId == request.auth.uid;
+      
+      // Allow users to update their own attempts
+      allow update: if request.auth != null &&
+        resource.data.userId == request.auth.uid;
+    }
+    
+    // Student performance collection
+    match /studentPerformance/{performanceId} {
+      // Allow teachers to read performance data for their students
+      allow read: if request.auth != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'teacher';
+      
+      // Allow students to read their own performance data
+      allow read: if request.auth != null &&
+        resource.data.studentId == request.auth.uid;
+      
+      // Allow system to create/update performance data
+      allow create, update: if request.auth != null;
+    }
+  }
+}

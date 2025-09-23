@@ -2,12 +2,12 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/Header";
 import { Link } from "react-router-dom";
-import { 
-  Rocket, 
-  Star, 
-  Trophy, 
-  BookOpen, 
-  Users, 
+import {
+  Rocket,
+  Star,
+  Trophy,
+  BookOpen,
+  Users,
   Zap,
   Target,
   Sparkles,
@@ -15,8 +15,13 @@ import {
   Play
 } from "lucide-react";
 import rocketHero from "@/assets/rocket-hero.jpg";
+import { useState } from "react";
+import { AuthModal } from "@/components/AuthModal";
+import PageTransition from "@/components/PageTransition";
 
 const Index = () => {
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
   const features = [
     {
       icon: <BookOpen className="h-8 w-8" />,
@@ -47,9 +52,16 @@ const Index = () => {
     { number: "6", label: "Subjects Available" },
   ];
 
-  return (
-    <div className="min-h-screen cosmic-bg">
-      <Header />
+  
+    return (
+      <PageTransition>
+        <div className="min-h-screen cosmic-bg">
+          <Header />
+      {/* Auth Modal */}
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+      />
       
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20 lg:py-32">
@@ -86,13 +98,18 @@ const Index = () => {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <Link to="/dashboard">
+                <Link to="/learning">
                   <Button variant="cosmic" size="lg" className="text-lg px-8 py-6">
                     <Play className="mr-2 h-5 w-5" />
                     Start Learning
                   </Button>
                 </Link>
-                <Button variant="hero" size="lg" className="text-lg px-8 py-6">
+                <Button 
+                  variant="hero" 
+                  size="lg" 
+                  className="text-lg px-8 py-6"
+                  onClick={() => setIsAuthModalOpen(true)}
+                >
                   Watch Demo
                   <ChevronRight className="ml-2 h-5 w-5" />
                 </Button>
@@ -229,20 +246,28 @@ const Index = () => {
               Join thousands of students who are already transforming their learning experience with EduQuest.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/dashboard">
+              <Link to="/learning">
                 <Button variant="cosmic" size="lg" className="text-lg px-12 py-6">
                   <Rocket className="mr-2 h-5 w-5" />
                   Get Started Free
                 </Button>
               </Link>
-              <Button variant="outline" size="lg" className="text-lg px-12 py-6">
-                Learn More
-              </Button>
+              <Link to="/signin">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="text-lg px-12 py-6"
+                >
+                  Sign In
+                </Button>
+              </Link>
             </div>
           </motion.div>
         </div>
       </section>
     </div>
+  );
+    </PageTransition>
   );
 };
 
